@@ -6,8 +6,6 @@ import (
 	"fmt"
 	"io"
 	"os"
-//	"log/slog"
-//	"time"
 
 	"net/http"
 )
@@ -26,16 +24,21 @@ func URLDownload(URL string) (data []byte, err error) {
 	Response, err := http.Get(URL)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "")
-		return nil, errors.Join(err, " -> http.Get/RSSFeedDownloader/")
+		return nil, fmt.Errorf("%s -> http.Get/URLDownloader/", err)
 	}
 	defer Response.Body.Close()
 
 	if Response.StatusCode != 200 {
 		fmt.Fprintf(os.Stderr, "Status code: %s\n", Response.Status)
-		return nil, errors.Join("Response did not contain '200 OK'")
+		return nil, errors.New("Response did not contain '200 OK'")
 	}
 
-	data = io.ReadAll(Response.Body)
+	data, err = io.ReadAll(Response.Body)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "")
+		return nil, fmt.Errorf("%s -> io.ReadAll/URLDownloader/", err)
+	}
+
 	return data, nil
 }
 
@@ -47,10 +50,62 @@ func main() {
 	}
 
 	// Display command line input.
+	fmt.Println("\n===================================================")
 	fmt.Printf("RSS feed: %s\n", RSSLink)
 	fmt.Printf("Output directory: \"%s\"\n", OutputDir)
+	fmt.Println("===================================================")
+
+	data, err := URLDownload(RSSLink)
+	if err != nil {
+		fmt.Printf("Error: %s\n", err)
+		return
+	}
+
+	if len(data) > 0 {
+		fmt.Printf("File size: %d\n", len(data))
+	}
 
 	return
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
