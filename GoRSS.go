@@ -7,6 +7,8 @@ import (
 	"io"
 	"os"
 
+//	"RSSParse"
+
 	"net/http"
 )
 
@@ -42,6 +44,9 @@ func URLDownload(URL string) (data []byte, err error) {
 	return data, nil
 }
 
+
+
+
 func main() {
 	// Sanity checks of command line input.
 	if len(RSSLink) == 0 {
@@ -59,11 +64,14 @@ func main() {
 	if err != nil {
 		fmt.Printf("Error: %s\n", err)
 		return
+	} else if len(data) > 0 {
+		fmt.Printf("File size: %d\n", len(data))
+	} else {
+		fmt.Printf("Zero Length Response.\n")
+		return
 	}
 
-	if len(data) > 0 {
-		fmt.Printf("File size: %d\n", len(data))
-	}
+	RSSFeedParse(string(data[:]))
 
 	return
 }
