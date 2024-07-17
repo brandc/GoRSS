@@ -2,16 +2,15 @@ package main
 
 import (
 	"encoding/xml"
-	"fmt"
 	"strings"
 )
 
 // Source: https://www.rssboard.org/rss-specification#ltcommentsgtSubelementOfLtitemgt
 
 type Enclosure struct {
-	Length int `xml:"length"`
-	SMIME string `xml:"smime"`
-	URL string `xml:"url"`
+	Length int `xml:"length,attr"`
+	SMIME string `xml:"smime,attr"`
+	URL string `xml:"url,attr"`
 }
 
 type Item struct {
@@ -23,7 +22,7 @@ type Item struct {
 	Category string `xml:"category,omitempty"`
 	Comment string `xml:"comment,omitempty"`
 
-	Enclosures []Enclosure `xml:"enclosure,omitempty"`
+	Enclosures []Enclosure `xml:"enclosure"`
 
 	Guid string `xml:"guid,omitempty"`
 	PublicationDate string `xml:"pubDate,omitempty"`
@@ -36,10 +35,24 @@ type TextInput struct {
 	Link string `xml:"link"`
 }
 
+type Image struct {
+	Height int `xml:"height,attr"`
+	Width int `xml:"width,attr"`
+	Title int `xml:title,attr`
+
+	Text string `xml:",chardata"`
+	Href string `xml:"href,attr"`
+}
+
+type Link struct {
+	Href string `xml:"href,attr"`
+	URL string `xml:",chardata"`
+}
+
 type Channel struct {
 	// Required fields
 	Description string `xml:"description"`
-	Link string `xml:"link"`
+	Links []Link `xml:"link"`
 	Title string `xml:"title"`
 
 	Items []Item `xml:"item,omitempty"`
@@ -51,7 +64,6 @@ type Channel struct {
 	Copyright string `xml:"copyright,omitempty"`
 	Documentation string `xml:"docs,omitempty"`
 	Generator string `xml:"generator,omitempty"`
-	Image string `xml:"image,omitempty"`
 	Language string `xml:"language,omitempty"`
 	LastBuildDate string `xml:"lastBuildDate,omitempty"`
 	ManagingEditor string `xml:"managingEditor,omitempty"`
@@ -62,10 +74,25 @@ type Channel struct {
 	TextInputs []TextInput `xml:"textInput,omitempty"`
 	TimeToLive string `xml:"ttl,omitempty"`
 	WebMaster string `xml:"webMaster,omitempty"`
+
+	// Fields with optional subelements
+	Images []Image `xml:"image,omitempty"`
+	ImageWidth int `xml:"image,attr"`
 }
 
-func RSSFeedParse(feed string) {
-	return
+type RSS struct {
+	XMLName xml.Name
+	Channels []Channel `xml:"channel"`
+}
+
+func RSSFeedParse(data string) (feed *RSS, err error) {
+	decoder := xml.NewDecoder(strings.NewReader(data))
+	err = decoder.Decode(&feed)
+	if err != nil {
+		return nil, err
+	}
+
+	return feed, nil
 }
 
 
