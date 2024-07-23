@@ -1,4 +1,4 @@
-package main
+package RSSParse
 
 import (
 	"encoding/xml"
