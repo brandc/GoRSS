@@ -9,7 +9,7 @@ Library for parsing RSS feeds into a Golang struct.
 
 # Building
 
-# Requires
+## Requires
 
 ```
 golang-1.18
