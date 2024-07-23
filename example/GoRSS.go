@@ -19,13 +19,6 @@ var RSSTimeFormat = "Mon, 02 Jan 2006 15:04:05 -0700"
 var RSSLinks []string
 var OutputDir string
 
-func init() {
-	//flag.StringVar(&RSSLink,   "r", "", 		   "RSS Link")
-	flag.StringVar(&OutputDir, "o", "./GoRSSDefault/", "Output Directory")
-	flag.Parse()
-	RSSLinks = flag.Args()
-}
-
 func URLDownload(URL string) (data []byte, err error) {
 	Response, err := http.Get(URL)
 	if err != nil {
@@ -48,16 +41,7 @@ func URLDownload(URL string) (data []byte, err error) {
 	return data, nil
 }
 
-func dumpRSS(feedLink, OutputDir string, ItemsToDisplay int) {
-	data, err := URLDownload(feedLink)
-	if err != nil {
-		fmt.Printf("Error: %s\n", err)
-		return
-	} else if len(data) < 1 {
-		fmt.Printf("Zero Length Response.\n")
-		return
-	}
-
+func dumpRSS(data, feedLink string, ItemsToDisplay int) {
 	// Display command line input.
 	fmt.Println("\n===================================================")
 	fmt.Printf("RSS feed: %s\n", feedLink)
@@ -136,6 +120,10 @@ func dumpRSS(feedLink, OutputDir string, ItemsToDisplay int) {
 
 
 func main() {
+	flag.StringVar(&OutputDir, "o", "./GoRSSDefault/", "Output Directory")
+	flag.Parse()
+	RSSLinks = flag.Args()
+
 	// Sanity checks of command line input.
 	if len(RSSLinks) == 0 {
 		fmt.Fprintln(os.Stderr, "Please specify a link with '-r'.")
@@ -143,7 +131,16 @@ func main() {
 	}
 
 	for _, link := range(RSSLinks) {
-		dumpRSS(link, OutputDir, 1)
+		data, err := URLDownload(link)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Error: %s\n", err)
+			return
+		} else if len(data) < 1 {
+			fmt.Printf("Zero Length Response.\n")
+			return
+		}
+
+		dumpRSS(string(data), link, 2)
 	}
 }
 
