@@ -8,7 +8,7 @@ import (
 	"os"
 	"time"
 
-//	"RSSParse"
+	"github.com/brandc/GoRSS"
 
 	"net/http"
 )
@@ -49,7 +49,7 @@ func dumpRSS(data, feedLink string, ItemsToDisplay int) {
 	fmt.Printf("File size: %d\n", len(data))	
 	fmt.Println("===================================================")
 
-	feed, err := RSSFeedParse(string(data[:]))
+	feed, err := RSSParse.RSSFeedParse(string(data[:]))
 	if err != nil {
 		fmt.Printf("main -> %s\n", err)
 	}
