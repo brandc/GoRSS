@@ -46,7 +46,7 @@ func dumpRSS(data, feedLink string, ItemsToDisplay int) {
 	fmt.Println("\n===================================================")
 	fmt.Printf("RSS feed: %s\n", feedLink)
 	fmt.Printf("Output directory: \"%s\"\n", OutputDir)
-	fmt.Printf("File size: %d\n", len(data))	
+	fmt.Printf("File size: %d\n", len(data))
 	fmt.Println("===================================================")
 
 	feed, err := RSSParse.RSSFeedParse(string(data[:]))
@@ -59,10 +59,10 @@ func dumpRSS(data, feedLink string, ItemsToDisplay int) {
 		return
 	}
 
-	for _, ChannelInstance := range(feed.Channels) {
+	for _, ChannelInstance := range feed.Channels {
 		fmt.Printf("Channel: %s\n", ChannelInstance.Title)
 		if len(ChannelInstance.Links) > 0 {
-			for _, Link := range(ChannelInstance.Links) {
+			for _, Link := range ChannelInstance.Links {
 				if len(Link.URL) > 0 {
 					fmt.Printf("\tLink: %s\n", Link.URL)
 				} else if len(Link.Href) > 0 {
@@ -71,7 +71,7 @@ func dumpRSS(data, feedLink string, ItemsToDisplay int) {
 			}
 		}
 		if len(ChannelInstance.Images) > 0 {
-			for _, ImageInstance := range(ChannelInstance.Images) {
+			for _, ImageInstance := range ChannelInstance.Images {
 				if len(ImageInstance.Href) > 0 {
 					fmt.Printf("\tImage URL: %s\n", ImageInstance.Href)
 				} else {
@@ -93,7 +93,7 @@ func dumpRSS(data, feedLink string, ItemsToDisplay int) {
 			continue
 		}
 
-		for Index, ItemInstance := range(ChannelInstance.Items) {
+		for Index, ItemInstance := range ChannelInstance.Items {
 			if Index >= ItemsToDisplay {
 				break
 			}
@@ -109,7 +109,7 @@ func dumpRSS(data, feedLink string, ItemsToDisplay int) {
 				fmt.Printf("Failed to parse time string with error: %s\n", err)
 			}
 			fmt.Printf("Unix: %d\n", PublicationTime.Unix())
-			for _, enclosureInstance := range(ItemInstance.Enclosures) {
+			for _, enclosureInstance := range ItemInstance.Enclosures {
 				fmt.Printf("URL: %s\n", enclosureInstance.URL)
 				fmt.Printf("Length: %d\n", enclosureInstance.Length)
 			}
@@ -117,7 +117,6 @@ func dumpRSS(data, feedLink string, ItemsToDisplay int) {
 		}
 	}
 }
-
 
 func main() {
 	flag.StringVar(&OutputDir, "o", "./GoRSSDefault/", "Output Directory")
@@ -130,7 +129,7 @@ func main() {
 		return
 	}
 
-	for _, link := range(RSSLinks) {
+	for _, link := range RSSLinks {
 		data, err := URLDownload(link)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "Error: %s\n", err)
@@ -143,45 +142,3 @@ func main() {
 		dumpRSS(string(data), link, 2)
 	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
